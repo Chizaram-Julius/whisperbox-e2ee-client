@@ -4,7 +4,7 @@ Secure React frontend for HNG Frontend Wizards Stage 4B. WhisperBox encrypts mes
 
 Live demo: `TODO: add deployed URL`
 
-GitHub repo: `TODO: add repository URL`
+GitHub repo: `https://github.com/Chizaram-Julius/whisperbox-e2ee-client`
 
 API docs: `https://whisperbox.koyeb.app/docs#`
 
