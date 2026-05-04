@@ -8,7 +8,7 @@ API docs: `https://whisperbox.koyeb.app/docs#`
 
 ## Stack
 
-- React 19 for the client-side messaging UI.
+- React for the client-side messaging UI.
 - TypeScript for typed API contracts, encrypted payloads, and safer crypto/session handling.
 - Vite for local development, production builds, and the `/api` proxy to the WhisperBox backend.
 - Tailwind CSS for responsive auth, chat, loading, empty, and error states.
