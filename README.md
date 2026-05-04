@@ -4,6 +4,8 @@ WhisperBox encrypts message content in the browser before it is sent to https://
 
 GitHub repo: `https://github.com/Chizaram-Julius/whisperbox-e2ee-client`
 
+netlify URL: https://whisperbox-e2ee-client.netlify.app/
+
 API docs: `https://whisperbox.koyeb.app/docs#`
 
 ## Stack
