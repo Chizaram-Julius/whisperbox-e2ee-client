@@ -1,8 +1,6 @@
 # WhisperBox E2EE Client
 
-Secure React frontend for HNG Frontend Wizards Stage 4B. WhisperBox encrypts message content in the browser before it is sent to `https://whisperbox.koyeb.app`, so the backend receives only encrypted blobs.
-
-Live demo: `TODO: add deployed URL`
+WhisperBox encrypts message content in the browser before it is sent to https://whisperbox.koyeb.app, so the backend receives only encrypted blobs.
 
 GitHub repo: `https://github.com/Chizaram-Julius/whisperbox-e2ee-client`
 

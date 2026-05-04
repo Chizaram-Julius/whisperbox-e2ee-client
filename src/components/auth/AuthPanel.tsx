@@ -16,6 +16,15 @@ export function AuthPanel({ onLogin, onRegister }: AuthPanelProps) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  function switchMode(nextMode: "login" | "register") {
+    if (nextMode === mode) return;
+    setMode(nextMode);
+    setUsername("");
+    setDisplayName("");
+    setPassword("");
+    setError("");
+  }
+
   async function submit(event: FormEvent) {
     event.preventDefault();
     setError("");
@@ -125,14 +134,14 @@ export function AuthPanel({ onLogin, onRegister }: AuthPanelProps) {
           <div className="mb-4 flex rounded-md bg-slate-100 p-1">
             <button
               className={`h-9 flex-1 rounded-md text-sm font-medium ${mode === "login" ? "bg-white text-ink shadow-sm" : "text-slate-500"}`}
-              onClick={() => setMode("login")}
+              onClick={() => switchMode("login")}
               type="button"
             >
               Login
             </button>
             <button
               className={`h-9 flex-1 rounded-md text-sm font-medium ${mode === "register" ? "bg-white text-ink shadow-sm" : "text-slate-500"}`}
-              onClick={() => setMode("register")}
+              onClick={() => switchMode("register")}
               type="button"
             >
               Register
