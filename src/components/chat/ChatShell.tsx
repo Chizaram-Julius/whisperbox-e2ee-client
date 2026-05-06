@@ -81,7 +81,9 @@ export function ChatShell({ session, crypto, onLogout }: ChatShellProps) {
         const openPartner = activeThread ? partnerId(activeThread) : null;
         const incomingPartner = incoming.from_user_id === session.user.id ? incoming.to_user_id : incoming.from_user_id;
         if (openPartner === incomingPartner) {
-          setMessages((current) => mergeMessages([...current, decrypted]));
+          setMessages((current) =>
+            mergeMessages([...current.filter((item) => item.payload.ciphertext !== incoming.payload.ciphertext), decrypted]),
+          );
         }
         void loadConversations();
       });
@@ -156,6 +158,12 @@ export function ChatShell({ session, crypto, onLogout }: ChatShellProps) {
       setMessageText("");
 
       const socketSent = socketRef.current?.send(recipientId, payload);
+      if (socketSent) {
+        setMessages((current) =>
+          current.map((item) => (item.id === tempMessageId ? { ...item, pending: false, delivered: true } : item)),
+        );
+      }
+
       if (!socketSent) {
         const stored = await sendMessageRest({ to: recipientId, payload });
         const decryptedStored = await decryptHistoryMessage(stored);
