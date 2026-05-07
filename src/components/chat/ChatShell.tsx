@@ -1,5 +1,5 @@
 import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { LockKeyhole, MessageSquarePlus, Search, Send, ShieldAlert, ShieldCheck } from "lucide-react";
+import { ArrowLeft, LockKeyhole, MessageSquarePlus, Search, Send, ShieldAlert, ShieldCheck } from "lucide-react";
 import type { CryptoIdentity } from "../../App";
 import {
   getConversationMessages,
@@ -191,10 +191,10 @@ export function ChatShell({ session, crypto, onLogout }: ChatShellProps) {
   const orderedConversations = useMemo(() => conversations, [conversations]);
 
   return (
-    <main className="flex h-screen flex-col bg-paper text-ink">
+    <main className="grid h-[100svh] max-h-[100svh] grid-rows-[64px_minmax(0,1fr)] overflow-hidden bg-paper text-ink">
       <TopBar session={session} connection={status} onLogout={onLogout} />
-      <div className="grid min-h-0 flex-1 md:grid-cols-[320px_1fr]">
-        <aside className="flex min-h-0 flex-col border-r border-slate-200 bg-white">
+      <div className="grid min-h-0 flex-1 grid-cols-1 overflow-hidden md:grid-cols-[320px_minmax(0,1fr)]">
+        <aside className={`${activeThread ? "hidden md:flex" : "flex"} min-h-0 min-w-0 flex-col border-r border-slate-200 bg-white`}>
           <div className="border-b border-slate-200 p-4">
             <Input
               label="Search users"
@@ -243,11 +243,19 @@ export function ChatShell({ session, crypto, onLogout }: ChatShellProps) {
           </div>
         </aside>
 
-        <section className="flex min-h-0 flex-col">
+        <section className={`${activeThread ? "grid" : "hidden md:grid"} min-h-0 min-w-0 grid-rows-[64px_minmax(0,1fr)] overflow-hidden`}>
           {activeThread ? (
             <>
               <div className="flex h-16 shrink-0 items-center justify-between border-b border-slate-200 bg-white px-4">
                 <div className="flex min-w-0 items-center gap-3">
+                  <button
+                    className="grid h-10 w-10 shrink-0 place-items-center rounded-md text-slate-600 hover:bg-slate-100 md:hidden"
+                    type="button"
+                    aria-label="Back to conversations"
+                    onClick={() => setActiveThread(null)}
+                  >
+                    <ArrowLeft className="h-5 w-5" />
+                  </button>
                   <Avatar name={activePartnerName} />
                   <div className="min-w-0">
                     <h2 className="truncate text-sm font-semibold">{activePartnerName}</h2>
@@ -259,7 +267,7 @@ export function ChatShell({ session, crypto, onLogout }: ChatShellProps) {
                 </div>
               </div>
 
-              <div className="min-h-0 flex-1 overflow-y-auto px-4 py-5">
+              <div className="min-h-0 overflow-y-auto px-4 py-5 pb-32">
                 {loadingMessages ? <p className="text-sm text-slate-500">Decrypting message history...</p> : null}
                 {!loadingMessages && messages.length === 0 ? (
                   <div className="mx-auto mt-20 max-w-sm text-center text-sm text-slate-500">
@@ -275,15 +283,30 @@ export function ChatShell({ session, crypto, onLogout }: ChatShellProps) {
               </div>
 
               {error ? <p className="mx-4 mb-3 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p> : null}
-              <form className="flex shrink-0 gap-3 border-t border-slate-200 bg-white p-3" onSubmit={sendMessage}>
-                <input
-                  className="h-11 min-w-0 flex-1 rounded-md border border-slate-200 px-3 text-sm outline-none focus:border-signal focus:ring-2 focus:ring-teal-100"
+              <form
+                className="fixed inset-x-0 bottom-0 z-50 flex min-h-[88px] items-center gap-2 border-t border-slate-200 bg-white p-3 shadow-[0_-10px_30px_rgba(15,23,42,0.12)] md:left-[320px]"
+                onSubmit={sendMessage}
+              >
+                <textarea
+                  className="h-14 min-w-0 flex-1 resize-none rounded-md border border-slate-200 px-3 py-3 text-sm leading-5 outline-none focus:border-signal focus:ring-2 focus:ring-teal-100"
                   placeholder="Write an encrypted message"
                   value={messageText}
                   maxLength={4000}
                   onChange={(event) => setMessageText(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" && !event.shiftKey) {
+                      event.preventDefault();
+                      event.currentTarget.form?.requestSubmit();
+                    }
+                  }}
                 />
-                <Button type="submit" loading={sending} title="Send encrypted message" aria-label="Send encrypted message">
+                <Button
+                  type="submit"
+                  loading={sending}
+                  title="Send encrypted message"
+                  aria-label="Send encrypted message"
+                  className="h-11 w-12 shrink-0 px-0"
+                >
                   <Send className="h-4 w-4" />
                 </Button>
               </form>

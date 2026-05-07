@@ -1,6 +1,7 @@
 import type { UserProfile } from "../types/api";
 
 const DB_NAME = "whisperbox-client";
+export const DB_VERSION = 2;
 const STORE = "session";
 const KEY = "current";
 
@@ -13,9 +14,17 @@ export type StoredSession = {
 
 function openDb(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, 1);
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
     request.onupgradeneeded = () => {
-      request.result.createObjectStore(STORE);
+      if (!request.result.objectStoreNames.contains(STORE)) {
+        request.result.createObjectStore(STORE);
+      }
+      if (!request.result.objectStoreNames.contains("local-users")) {
+        request.result.createObjectStore("local-users", { keyPath: "id" });
+      }
+      if (!request.result.objectStoreNames.contains("local-messages")) {
+        request.result.createObjectStore("local-messages", { keyPath: "id" });
+      }
     };
     request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error);

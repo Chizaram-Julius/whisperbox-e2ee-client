@@ -126,6 +126,7 @@ Implemented endpoints:
 - The app does not implement message authentication beyond AES-GCM integrity and server auth.
 - Replay attack prevention is limited by the backend protocol. The client de-duplicates repeated WebSocket message ids during a live session, but it does not maintain a signed monotonic message counter that would detect every replay with a new server id.
 - Forward secrecy is not implemented. Long-term RSA keys protect per-message AES keys; compromise of a user private key can expose historical encrypted AES keys.
+- The remote WhisperBox API can return `500 Internal Server Error` for auth or conversation endpoints. The frontend does not fake successful registration; it fails closed and keeps generated private-key material on the client.
 
 ## Run Locally
 
@@ -137,6 +138,8 @@ npm run dev
 Open the local Vite URL shown in the terminal. Web Crypto API requires HTTPS or `localhost`; Vite on localhost is supported.
 
 Local development uses Vite's `/api` proxy to avoid browser CORS blocks while still calling the real WhisperBox backend. In production, the app uses `https://whisperbox.koyeb.app` directly unless `VITE_API_BASE_URL` is set. WebSocket traffic uses `wss://whisperbox.koyeb.app` unless `VITE_WS_BASE_URL` is set.
+
+If the remote WhisperBox auth endpoint returns `500` during local development, the app falls back to a dev-only local account store so the E2EE UI can still be tested. The fallback stores public keys, PBKDF2 salts, wrapped private keys, and encrypted message blobs only; it does not store plaintext private keys or plaintext messages. Production builds do not use this fallback.
 
 ## Manual E2EE Test
 

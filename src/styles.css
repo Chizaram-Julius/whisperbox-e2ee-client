@@ -18,6 +18,13 @@ body {
   min-width: 320px;
 }
 
+html,
+body,
+#root {
+  height: 100%;
+  overflow: hidden;
+}
+
 button,
 input {
   font: inherit;

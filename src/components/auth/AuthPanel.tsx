@@ -47,7 +47,7 @@ export function AuthPanel({ onLogin, onRegister }: AuthPanelProps) {
         await onRegister({ username: username.trim(), displayName: displayName.trim(), password });
       }
     } catch (error) {
-      setError(error instanceof Error ? error.message : "Authentication failed.");
+      setError(getAuthErrorMessage(error, mode));
     } finally {
       setLoading(false);
     }
@@ -128,4 +128,16 @@ export function AuthPanel({ onLogin, onRegister }: AuthPanelProps) {
       </section>
     </main>
   );
+}
+
+function getAuthErrorMessage(error: unknown, mode: "login" | "register"): string {
+  const message = error instanceof Error ? error.message : "";
+
+  if (message.toLowerCase().includes("internal server error")) {
+    return mode === "login"
+      ? "WhisperBox login returned 500 from the remote backend. Try again in a moment, then confirm your username and password."
+      : "WhisperBox /auth/register is returning 500 from the remote backend. No plaintext private key was sent; try again when the API is healthy.";
+  }
+
+  return message || "Authentication failed.";
 }
